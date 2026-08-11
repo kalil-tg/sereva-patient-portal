@@ -1,0 +1,18 @@
+import { chromium } from '@playwright/test'
+import { mkdir } from 'node:fs/promises'
+const output=new URL('../screenshots/',import.meta.url)
+await mkdir(output,{recursive:true})
+const browser=await chromium.launch({headless:true})
+const page=await browser.newPage({viewport:{width:1536,height:1024},deviceScaleFactor:1})
+await page.goto('http://127.0.0.1:4176/',{waitUntil:'networkidle'})
+await page.screenshot({path:new URL('01-dashboard-desktop.png',output).pathname.slice(1)})
+await page.getByRole('button',{name:/Review result/}).click()
+await page.screenshot({path:new URL('02-results-desktop.png',output).pathname.slice(1)})
+await page.getByRole('button',{name:/Overview/}).click()
+await page.getByRole('button',{name:/Request refill/}).first().click()
+await page.screenshot({path:new URL('03-refill-desktop.png',output).pathname.slice(1)})
+const mobile=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1})
+await mobile.goto('http://127.0.0.1:4176/',{waitUntil:'networkidle'})
+await mobile.getByRole('button',{name:/Request refill/}).first().click()
+await mobile.screenshot({path:new URL('04-refill-mobile.png',output).pathname.slice(1)})
+await browser.close()
